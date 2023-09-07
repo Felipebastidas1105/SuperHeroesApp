@@ -1,11 +1,14 @@
 package com.example.searchsuperheroesapp
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.searchsuperheroesapp.DetailsSuperHeroActivity.Companion.ExtraId
 import com.example.searchsuperheroesapp.databinding.ActivityMainBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -39,7 +42,7 @@ class MainActivity : AppCompatActivity() {
 
             override fun onQueryTextChange(newText: String?) = false //Esta funcion se activara automaticamente cuando estemos escribiendo
         })
-        adapter = SuperHeroAdapter()
+        adapter = SuperHeroAdapter{navigateToDetails(it)}
         binding.rvSuperHeroes.setHasFixedSize(true)
         binding.rvSuperHeroes.layoutManager = LinearLayoutManager(this)
         binding.rvSuperHeroes.adapter = adapter
@@ -61,6 +64,8 @@ class MainActivity : AppCompatActivity() {
                         adapter.updateList(response.superHeroes)
                         binding.progressBar.isVisible = false
                     }
+                }else{
+                    //Toast.makeText(this@MainActivity, "not found the superhero", Toast.LENGTH_SHORT).show()
                 }
             }else{
                 Log.i("Bastidas", "No funciona :(")
@@ -75,5 +80,10 @@ class MainActivity : AppCompatActivity() {
             .baseUrl("https://superheroapi.com/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
+    }
+    private fun navigateToDetails(Id:String){
+        val intent = Intent(this,DetailsSuperHeroActivity::class.java)
+        intent.putExtra(ExtraId,Id)
+        startActivity(intent)
     }
 }
